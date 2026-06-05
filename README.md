@@ -119,6 +119,10 @@ Operational details in [CLAUDE.md](CLAUDE.md).
 - [Firecrawl](https://www.firecrawl.dev/) for managed scraping
 - [LangSmith](https://www.langchain.com/langsmith) (optional) for tracing
 
+## Status & known issues
+
+This is in-progress portfolio work, not a polished product. See [KNOWN_ISSUES.md](KNOWN_ISSUES.md) for current limitations — most notably an ongoing eval golden re-curation after the agent caught a curation mistake (vendor-vs-buyer mislabeling) that's now documented as one of the project's sharpest demonstrations.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
