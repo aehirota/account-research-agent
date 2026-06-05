@@ -1,0 +1,60 @@
+icp:
+  name: "Series A-C B2B SaaS hiring GTM Engineers / running RevOps modernization"
+  stage:
+    target: ["seed-strong-signal", "series-a", "series-b", "series-c"]
+    disqualify: ["pre-seed", "series-d-plus-legacy"]
+  sector:
+    target: ["b2b-saas", "sales-tech", "revops-tooling", "data-tooling"]
+    disqualify: ["agency", "consultancy", "marketplace-consumer"]
+  gtm_maturity_signals:
+    positive:
+      - "Has a RevOps function or hiring for one"
+      - "JDs reference Clay, Apollo, Outreach, Salesloft, HubSpot, Salesforce"
+      - "JDs mention AI agents, LLMs, automation, agentic GTM"
+      - "Modern data stack mentioned (Snowflake, BigQuery, dbt)"
+    negative:
+      - "Pure BI/dashboarding focus, no GTM systems"
+      - "Anti-AI rhetoric or 'human-only sales' stance"
+      - "No GTM/RevOps roles in last 6 months"
+  pitch_hooks:
+    high_fit:
+      - "Hiring GTM Engineer / RevOps Architect — Anderson's profile fits"
+      - "Public AI agent posture suggests buyer for agentic GTM consulting"
+      - "Scaling outbound, recent Series A/B funding"
+    low_fit:
+      - "BI/analytics-only mandate"
+      - "Hiring frozen, no expansion signal"
+
+models:
+  # Sonnet for nodes that benefit from stronger reasoning + tool use.
+  # web_enricher uses this because the web_search agentic loop needs it.
+  reasoning: "claude-sonnet-4-6"
+  # Haiku for lighter calls: jobs extraction, structuring web findings.
+  cheap: "claude-haiku-4-5-20251001"
+  # Extractors: Haiku by default. On Anthropic Tier 1 (30k Sonnet tokens/min),
+  # running icp_extractor + gtm_maturity on Sonnet in parallel with web_enricher
+  # bursts past the rate limit. Haiku has its own quota pool. If you're on
+  # Tier 2+ and want stronger extraction reasoning, change to claude-sonnet-4-6.
+  extractor: "claude-haiku-4-5-20251001"
+
+graph:
+  max_iterations: 3
+  critic_pass_threshold: 4.0     # 0-5 scale; if score >= this, exit loop
+  mandatory_gap_severity: 0.7    # gaps at/above this severity must be addressed
+
+scraper:
+  pages_to_attempt:
+    - "/"
+    - "/about"
+    - "/careers"
+    - "/jobs"
+    - "/customers"
+    - "/pricing"
+  timeout_seconds: 30
+
+web_enricher:
+  # Each web_search invocation accumulates ~1.5-2k tokens of results into the
+  # next turn's input. On Tier 1 Anthropic (30k Sonnet tokens/min), max_uses=5
+  # bursts past the limit and triggers retry loops that can hang the agent.
+  # Start at 2-3. Raise once you're on Tier 2+.
+  max_uses: 2

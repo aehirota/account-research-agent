@@ -1,0 +1,19 @@
+# Sample domain list for batch runs and Clay vs. agent comparison.
+# Lines starting with # are skipped; blank lines are skipped.
+# Pass to: python run.py --batch evals/domains.sample.txt
+
+clay.com
+apollo.io
+pocus.com
+regie.ai
+gong.io
+outreach.io
+mutinyhq.com
+vitally.io
+vercel.com
+retool.com
+stripe.com
+figma.com
+notion.so
+deloitte.com
+gymshark.com
