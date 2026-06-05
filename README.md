@@ -28,7 +28,15 @@ Here's the brief the agent produced for `vercel.com` — a textbook disqualifier
 
 A Clay table can score 4.0. It cannot tell you *why it overrode the rule*. That gap is what this project demonstrates.
 
-Full brief and 4 more in [`outputs/samples/`](outputs/samples/).
+### Sample briefs
+
+Three runs in [`outputs/samples/`](outputs/samples/) showing the agent's reasoning across edge cases — the cases where simple scoring breaks down:
+
+- [`peer-not-buyer-clay.md`](outputs/samples/peer-not-buyer-clay.md) — Clay scores **0/5 Pass**. The agent identifies Clay as the *vendor* of the GTM tooling Anderson uses, not a *buyer* of GTM Engineering services. A naive ICP-fit agent would mark Clay as a strong fit ("Series C B2B SaaS, AI-native, hiring GTM Engineers"); this one catches the structural inversion.
+- [`peer-not-buyer-apollo.md`](outputs/samples/peer-not-buyer-apollo.md) — Apollo scores **1/5 Pass**, same logic. Apollo *ships* agentic GTM as a product. Same surface signals as Clay, same correct read.
+- [`disqualified-deloitte.md`](outputs/samples/disqualified-deloitte.md) — Deloitte scores **0/5 Pass**. Consultancy disqualifier honored cleanly. The straightforward case included as a control.
+
+Together they show the agent making the distinction a Clay table can't: not just "does this company match the ICP keywords" but "does this company actually buy what we're selling, given the structure of the market." That's the architect-vs-operator signal.
 
 ## Architecture
 
