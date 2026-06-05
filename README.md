@@ -30,8 +30,9 @@ A Clay table can score 4.0. It cannot tell you *why it overrode the rule*. That 
 
 ### Sample briefs
 
-Three runs in [`outputs/samples/`](outputs/samples/) showing the agent's reasoning across edge cases — the cases where simple scoring breaks down:
+Four runs in [`outputs/samples/`](outputs/samples/) spanning the agent's reasoning across both clean-fit cases and edge cases:
 
+- [`buyer-fit-retool.md`](outputs/samples/buyer-fit-retool.md) — Retool scores **4/5 Pursue**. The clean-fit case. Specific evidence (Head of RevOps Jonathan Krangel by name, Maxio + Salesforce stack, Bedrock integration dated June 2024) and a concrete pitch angle ending in "Jonathan Krangel is the right first call." This is what an architect-level account brief looks like end-to-end.
 - [`peer-not-buyer-clay.md`](outputs/samples/peer-not-buyer-clay.md) — Clay scores **0/5 Pass**. The agent identifies Clay as the *vendor* of the GTM tooling Anderson uses, not a *buyer* of GTM Engineering services. A naive ICP-fit agent would mark Clay as a strong fit ("Series C B2B SaaS, AI-native, hiring GTM Engineers"); this one catches the structural inversion.
 - [`peer-not-buyer-apollo.md`](outputs/samples/peer-not-buyer-apollo.md) — Apollo scores **1/5 Pass**, same logic. Apollo *ships* agentic GTM as a product. Same surface signals as Clay, same correct read.
 - [`disqualified-deloitte.md`](outputs/samples/disqualified-deloitte.md) — Deloitte scores **0/5 Pass**. Consultancy disqualifier honored cleanly. The straightforward case included as a control.

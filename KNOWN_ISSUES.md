@@ -14,14 +14,26 @@ A real buyer for Anderson's services is a Series A–C B2B SaaS in a **non-GTM-a
 
 See [outputs/samples/peer-not-buyer-clay.md](outputs/samples/peer-not-buyer-clay.md) and [outputs/samples/peer-not-buyer-apollo.md](outputs/samples/peer-not-buyer-apollo.md) for the agent's reasoning on this distinction.
 
-**Affected goldens:**
+**Affected goldens — vendor-disguised-as-buyer:**
 - `clay.com`, `apollo.io`, `11x.ai`, `pocus.com`, `default.com`, `regie.ai` (labeled strong fit, scored 0–1 by agent)
 - `gong.io`, `outreach.io`, `mutinyhq.com`, `vitally.io`, `hockeystack.com` (labeled good fit, expected to score similarly)
 
+**Affected goldens — late-stage-mislabeled-as-mid-fit:**
+
+Discovered 2026-06-05 during batch 2 review. The same surface-vs-reality mistake but a different root cause: I picked "mid fit" / "weak fit" candidates from well-known SaaS companies that are actually now post-Series-C. The agent correctly fires the `series-d-plus-legacy` disqualifier on all of them.
+
+- `posthog.com` — agent identified Series E (raised 2024)
+- `figma.com` — agent identified IPO 2025
+- `stripe.com` — already fixed in golden_accounts.jsonl on 2026-06-05
+
+**The deeper observation:** Most well-known B2B SaaS is now post-Series C. Building a "mid fit" golden class from companies I can name off the top of my head doesn't work — those companies are all already too big. Real Series A–C non-GTM-adjacent buyers are obscure by definition. Sourcing them requires deliberate research, not surface intuition.
+
+**One validated buyer-class pass:** `retool.com` was the only golden across both batches that came back as a clean strong-fit pass (4.0/5, pursue, no disqualifier) with rich pitch angle. See [outputs/samples/buyer-fit-retool.md](outputs/samples/buyer-fit-retool.md). This validates the architecture works on genuine buyer-class accounts when they exist in the golden set.
+
 **Resolution plan:**
-1. Eval is being re-scoped: disqualifier-class and buyer-class goldens are the canonical signal; vendor-class accounts are kept only as edge-case demonstrations.
-2. Buyer-class candidates to add when curated: devtools, fintech, healthtech, vertical SaaS at Series A–C with public GTM Engineer/RevOps hires.
-3. Until then, eval validity claims should be made against the **non-vendor goldens only**.
+1. Eval is being re-scoped: disqualifier-class goldens are the canonical signal (deloitte, mckinsey, gymshark, vercel-override, stripe — all PASS). Vendor-class and stage-mislabeled accounts kept only as edge-case demonstrations.
+2. Buyer-class candidates to add when curated: obscure Series A–C devtools, fintech, healthtech, vertical SaaS with public GTM Engineer/RevOps hires. Famous SaaS is mostly disqualified.
+3. Until then, eval validity claims should be made against the **disqualifier-class + retool.com only** (6 PASS goldens).
 
 ## Quality variance on `gtm_maturity.revops_maturity` scoring
 
