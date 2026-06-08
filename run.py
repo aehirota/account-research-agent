@@ -1,6 +1,7 @@
 import argparse
 import json
 import sys
+from contextlib import redirect_stdout
 from pathlib import Path
 
 import yaml
@@ -11,6 +12,8 @@ load_dotenv(PROJECT_DIR / ".env")
 
 from graph import build  # noqa: E402
 from state import init_state  # noqa: E402
+
+JSON_SCHEMA_VERSION = "1.0"
 
 
 def load_config() -> dict:
@@ -97,6 +100,32 @@ def run_one(domain: str, app_config: dict, mode: str = "single") -> dict:
     return final
 
 
+def _json_payload(domain: str, final: dict) -> dict:
+    """Build the public JSON contract for downstream consumers (e.g. meeting-prep-agent).
+
+    Stable schema — bump JSON_SCHEMA_VERSION on breaking changes. See docs/json-api.md.
+    """
+    return {
+        "schema_version": JSON_SCHEMA_VERSION,
+        "domain": domain,
+        "summary": _summary(final),
+        "brief_markdown": final.get("brief") or "",
+    }
+
+
+def run_one_json(domain: str, app_config: dict) -> dict:
+    """Run the agent and return the JSON payload, with all diagnostic prints
+    redirected to stderr so stdout stays a clean JSON contract.
+
+    File outputs (outputs/<domain>.md + .summary.json) are still written so the
+    audit trail is preserved regardless of invocation mode.
+    """
+    with redirect_stdout(sys.stderr):
+        final = run_agent(domain, app_config, mode="json")
+        _write_outputs(domain, final)
+    return _json_payload(domain, final)
+
+
 def _is_complete(domain: str) -> bool:
     """A domain run is complete iff its summary.json exists and the critic
     actually produced a fit_score. Half-written outputs (process killed
@@ -164,12 +193,23 @@ def main() -> int:
         action="store_true",
         help="In batch mode, re-run domains that already have complete outputs (default: skip them)",
     )
+    parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Print the full result as JSON to stdout (diagnostics routed to stderr). "
+        "Stable contract for downstream consumers. See docs/json-api.md. "
+        "Single-domain mode only; ignored in --batch mode.",
+    )
     args = parser.parse_args()
 
     app_config = load_config()
     if args.batch:
         results = run_batch(args.batch, app_config, force=args.force)
         return 0 if not any(st == "err" for _, st in results) else 1
+    if args.json:
+        payload = run_one_json(args.domain, app_config)
+        print(json.dumps(payload, indent=2, default=str))
+        return 0
     run_one(args.domain, app_config)
     return 0
 
