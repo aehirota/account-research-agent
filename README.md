@@ -134,9 +134,15 @@ This is the first repo in a three-stage agentic pre-outbound system. Each repo r
 | [signal-monitor](https://github.com/aehirota/signal-monitor) | When to act | JSON via `python run.py --only <domain> --json` |
 | [meeting-prep-agent](https://github.com/aehirota/meeting-prep-agent) | What to say | Markdown + JSON sidecar via `python run.py <input.yaml>` |
 
-Three MIT repos. Three architecturally-coherent state machines. One thesis: **code-enforced rules over prompt-asked-nicely rules**, critic-driven self-correction, modular composition through stable CLI contracts. Same pattern shows up five times across the trilogy: disqualifier clamp (here) → length compliance (sister project, the blog autopilot) → three clamps in Signal Monitor → concurrency clamp in SM's runtime → four clamps + sequential composition in MPA.
+And the **discipline layer** above the trilogy:
 
-A future fourth repo can compose ARA + SM + MPA the same way MPA composes ARA + SM — the contract is the CLI + the `--json` schema, not the Python imports.
+| Repo | Role |
+|---|---|
+| [eval-watch](https://github.com/aehirota/eval-watch) | How do you know your agents — all of them — are right? Monthly GH Actions cron wraps each sibling's existing eval via subprocess adapter; regression gate vs anchored baseline; STATUS.md auto-committed to the repo. ~$30/year ops cost. |
+
+Three MIT repos. Three architecturally-coherent state machines. One thesis: **code-enforced rules over prompt-asked-nicely rules**, critic-driven self-correction, modular composition through stable CLI contracts. Same pattern shows up six times across the portfolio: disqualifier clamp (here) → length compliance (sister project, the blog autopilot) → three clamps in Signal Monitor → concurrency clamp in SM's runtime → four clamps + sequential composition in MPA → eval discipline enforced in CI (eval-watch).
+
+A future fifth repo can compose ARA + SM + MPA + eval-watch the same way MPA composes ARA + SM — the contract is the CLI + the `--json` schema, not the Python imports.
 
 ## License
 
