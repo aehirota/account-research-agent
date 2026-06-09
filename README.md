@@ -124,6 +124,20 @@ Operational details in [CLAUDE.md](CLAUDE.md).
 
 This is in-progress portfolio work, not a polished product. See [KNOWN_ISSUES.md](KNOWN_ISSUES.md) for current limitations — most notably an ongoing eval golden re-curation after the agent caught a curation mistake (vendor-vs-buyer mislabeling) that's now documented as one of the project's sharpest demonstrations.
 
+## Part of the pre-outbound stack
+
+This is the first repo in a three-stage agentic pre-outbound system. Each repo runs standalone; together they compose end-to-end.
+
+| Repo | Answers | Output contract |
+|---|---|---|
+| **account-research-agent** (this repo) | Who fits | JSON via `python run.py <domain> --json` |
+| [signal-monitor](https://github.com/aehirota/signal-monitor) | When to act | JSON via `python run.py --only <domain> --json` |
+| [meeting-prep-agent](https://github.com/aehirota/meeting-prep-agent) | What to say | Markdown + JSON sidecar via `python run.py <input.yaml>` |
+
+Three MIT repos. Three architecturally-coherent state machines. One thesis: **code-enforced rules over prompt-asked-nicely rules**, critic-driven self-correction, modular composition through stable CLI contracts. Same pattern shows up five times across the trilogy: disqualifier clamp (here) → length compliance (sister project, the blog autopilot) → three clamps in Signal Monitor → concurrency clamp in SM's runtime → four clamps + sequential composition in MPA.
+
+A future fourth repo can compose ARA + SM + MPA the same way MPA composes ARA + SM — the contract is the CLI + the `--json` schema, not the Python imports.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
