@@ -45,6 +45,27 @@ def _serialize_raw(raw) -> str:
     return "\n\n".join(parts)
 
 
+# peer-gtm-vendor is only coherent when the model itself classified the company
+# as sales/GTM tooling. Haiku reliably gets sector_guess right, then sometimes
+# misapplies the flag to any "platform vendor" (observed 2026-06-11: Retool,
+# sector "internal tools / low-code platform", flagged as a GTM peer despite the
+# prompt naming Retool as the counter-example). Code strips the incoherent flag.
+GTM_SECTOR_MARKERS = (
+    "sales", "gtm", "go-to-market", "revenue", "sdr", "outbound",
+    "abm", "enrichment", "prospecting", "revops",
+)
+
+
+def _strip_incoherent_peer_vendor_flag(assessment: "IcpFitAssessment") -> tuple["IcpFitAssessment", bool]:
+    if "peer-gtm-vendor" not in assessment.disqualifiers_hit:
+        return assessment, False
+    sector = assessment.sector_guess.lower()
+    if any(marker in sector for marker in GTM_SECTOR_MARKERS):
+        return assessment, False
+    remaining = [d for d in assessment.disqualifiers_hit if d != "peer-gtm-vendor"]
+    return assessment.model_copy(update={"disqualifiers_hit": remaining}), True
+
+
 def run(state: AccountResearchState, config: dict, hint: str | None = None) -> dict:
     """Score ICP fit from all available raw research (site + jobs + web)."""
     raw = state["raw"]
@@ -66,6 +87,31 @@ def run(state: AccountResearchState, config: dict, hint: str | None = None) -> d
         user=user,
         schema=IcpFitAssessment,
     )
+
+    assessment, flag_stripped = _strip_incoherent_peer_vendor_flag(assessment)
+    if flag_stripped:
+        # The score was reasoned under the wrongly-held flag, so one corrective
+        # re-call with the contradiction named. Single retry, capped here in
+        # code — if the model flags again, strip again and accept its score.
+        print(
+            f"[icp_extractor] {state['domain']}: stripped peer-gtm-vendor flag — "
+            f"sector_guess '{assessment.sector_guess}' has no GTM marker; re-assessing once"
+        )
+        correction = (
+            "\n\nCORRECTION (rule enforcement): you flagged peer-gtm-vendor, but you "
+            f"classified the sector as '{assessment.sector_guess}' — which is not "
+            "sales/GTM tooling, so the flag does not apply by definition. Re-assess "
+            "WITHOUT peer-gtm-vendor: this company is a potential BUYER of GTM "
+            "Engineering services for its own sales motion. Score against the ICP "
+            "on the buyer-side evidence."
+        )
+        assessment = anthropic_client.call_structured(
+            model=config["models"]["extractor"],
+            system=system,
+            user=user + correction,
+            schema=IcpFitAssessment,
+        )
+        assessment, _ = _strip_incoherent_peer_vendor_flag(assessment)
 
     # Hybrid disqualifier policy enforcement: if disqualifiers were flagged
     # but no override reasoning was provided, clamp fit_score to <= 1 regardless

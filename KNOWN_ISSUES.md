@@ -35,6 +35,11 @@ Discovered 2026-06-05 during batch 2 review. The same surface-vs-reality mistake
 2. Buyer-class candidates to add when curated: obscure Series A–C devtools, fintech, healthtech, vertical SaaS with public GTM Engineer/RevOps hires. Famous SaaS is mostly disqualified.
 3. Until then, eval validity claims should be made against the **disqualifier-class + retool.com only** (6 PASS goldens).
 
+**Resolution progress (2026-06-11):**
+- `clay.com` + `apollo.io` goldens re-curated to disqualifier-class per this adjudication (expected `disqualified: true`, fit 1±1) — they're now canonical vendor/buyer-confusion drift catchers in the [eval-watch](https://github.com/aehirota/eval-watch) subset rather than known-wrong expectations.
+- ICP config gained an explicit `peer-gtm-vendor` sector disqualifier, and the extractor prompt now names the two mislabeling traps directly: peer vendor ≠ buyer (surface signals don't override), and stage = funding-round letter, not valuation (a Series C at $3B is still Series C — previously the agent reached the right verdict on clay.com via the wrong rule, flagging `series-d-plus-legacy` on a Series C company).
+- Remaining mislabeled goldens (11x.ai, pocus, default, regie, gong, outreach, mutiny, vitally, hockeystack, posthog, figma) still pending re-curation — item 2 above unchanged.
+
 ## Quality variance on `gtm_maturity.revops_maturity` scoring
 
 **Status:** Known limitation, documented in [evals/rubric.md](evals/rubric.md). The check is optional, not mandatory.

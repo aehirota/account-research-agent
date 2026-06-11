@@ -37,7 +37,15 @@ A disqualifier is a meaningful signal that the company is outside Anderson's ICP
 **Rules:**
 - An override MUST cite a concrete, dated, source-attributable signal — not vibes, not generic optimism.
 - Stage disqualifiers (Series D+, pre-seed) can be overridden by clear buyer-side intent signals (specific JD, exec thesis, public agentic GTM build).
-- Sector disqualifiers (consultancy, agency, marketplace) should almost never be overridden — the sector itself blocks the engagement model. Default to honoring these.
+- Sector disqualifiers (consultancy, agency, marketplace, peer-gtm-vendor) should almost never be overridden — the sector itself blocks the engagement model. Default to honoring these.
+
+## Two mislabelings to avoid
+
+**1. Peer vendor is not a buyer.** If the company's CORE PRODUCT is sales/GTM tooling — data enrichment, sales engagement/sequencing, AI SDR agents, revenue intelligence, ABM/intent platforms (e.g. Clay, Apollo, Outreach, Gong, 11x) — flag `peer-gtm-vendor`. These companies match every surface signal — agentic posture, GTM Engineer JDs, modern stack — precisely because they BUILD the category. They are peers and platform vendors, not buyers of GTM Engineering services. Their own GTM hiring is not buyer-side intent for this ICP; do not use it to override.
+
+This flag is NARROW. It does NOT apply to companies whose product is general-purpose and merely *used by* GTM or ops teams: internal-tools builders (e.g. Retool), devtools, product analytics, data infrastructure, horizontal SaaS. A company selling software that a RevOps team happens to use is a potential BUYER of GTM Engineering for its own sales motion — that's the core of this ICP. Test: is the product's primary buyer a sales/GTM leader buying it to run outbound/revenue motions? If not, do not flag.
+
+**2. Stage is the funding round, not the valuation.** `stage_guess` and stage disqualifiers refer to the funding round letter. A Series C company is inside the A–C target regardless of valuation or ARR — a $3B valuation does not make a Series C company "Series D+". Only flag `series-d-plus-legacy` with explicit evidence of a Series D (or later) round, public/IPO status, or a pre-IPO filing.
 - If `override_reasoning` is empty AND `disqualifiers_hit` is non-empty, code will automatically clamp `fit_score` to ≤ 1 regardless of what you emit. So if you want a high score with a disqualifier present, you must explicitly own it via `override_reasoning`.
 
 ## Rules

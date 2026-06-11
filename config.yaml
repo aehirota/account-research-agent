@@ -5,7 +5,11 @@ icp:
     disqualify: ["pre-seed", "series-d-plus-legacy"]
   sector:
     target: ["b2b-saas", "sales-tech", "revops-tooling", "data-tooling"]
-    disqualify: ["agency", "consultancy", "marketplace-consumer"]
+    # peer-gtm-vendor: company's PRODUCT is GTM tooling / sales AI (the category
+    # a GTM Engineer operates — enrichment, engagement, AI SDR, revenue intel).
+    # They match every surface signal but are peers, not buyers of GTM
+    # Engineering services. Adjudicated 2026-06-05, see KNOWN_ISSUES.md.
+    disqualify: ["agency", "consultancy", "marketplace-consumer", "peer-gtm-vendor"]
   gtm_maturity_signals:
     positive:
       - "Has a RevOps function or hiring for one"
